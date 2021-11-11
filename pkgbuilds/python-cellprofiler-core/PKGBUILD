@@ -1,0 +1,37 @@
+# Maintainer: None
+
+pkgname=python-cellprofiler-core
+pkgver=4.2.1
+pkgrel=1
+pkgdesc="CellProfiler’s python image processing library, core only"
+arch=('i686' 'x86_64')
+url="https://github.com/CellProfiler/centrosome"
+license=('BSD')
+depends=(
+  'python-numpy'
+  'python-scipy'
+  'python-psutil'
+)
+makedepends=('python-setuptools' 'cython')
+source=("https://files.pythonhosted.org/packages/f6/6d/18e4d30a8d72d34ae323907327fcd766952d0f365b361dfa48675d5b335e/cellprofiler-core-${pkgver}.tar.gz")
+sha256sums=('ad0a1c34354f431cf705686ebfefca0108b40b8c84478d5b1b8b42b405810874')
+
+prepare() {
+  cd "$srcdir/cellprofiler-core-$pkgver"
+}
+
+build() {
+  cd "$srcdir/cellprofiler-core-$pkgver"
+
+  sed -i 's|pyzmq==|pyzmq>=|' setup.py
+  sed -i 's|docutils==|docutils>=|' setup.py
+
+  python setup.py build
+}
+
+package() {
+  cd "$srcdir/cellprofiler-core-$pkgver"
+  python setup.py install --root="$pkgdir"/ --optimize=1
+  install -D LICENSE "$pkgdir"/usr/share/licenses/$pkgname/LICENSE
+}
+

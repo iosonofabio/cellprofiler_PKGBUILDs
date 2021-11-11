@@ -1,0 +1,31 @@
+# Maintainer: Eugene Dvoretsky <radioxoma at gmail.com>
+
+pkgname=python-prokaryote
+pkgver=2.4.4
+pkgrel=1
+pkgdesc="Python CellProfiler’s Java dependencies"
+arch=('i686' 'x86_64')
+url="https://github.com/CellProfiler/prokaryote"
+license=('BSD')
+depends=('jdk-openjdk' 'python-numpy')
+makedepends=('python-setuptools' 'cython')
+source=("https://files.pythonhosted.org/packages/40/2f/e862d428c5e475faf22b0a8d12a3359b694bc49e54bc2a4fa95b6cca1aef/prokaryote-${pkgver}.tar.gz")
+sha256sums=('0a147b8b9a0a7279aa773e6a8fe459eb49f6de479f7afe7203dc4ac10dc8b587')
+
+
+prepare() {
+  cd "$srcdir/prokaryote-$pkgver"
+}
+
+build() {
+  cd "$srcdir/prokaryote-$pkgver"
+  # Warning! It will fetch more than 130 Mb.
+  python setup.py build
+}
+
+package() {
+  cd "$srcdir/prokaryote-$pkgver"
+  python setup.py install --root="$pkgdir"/ --optimize=1
+  install -D LICENSE "$pkgdir"/usr/share/licenses/$pkgname/LICENSE
+}
+

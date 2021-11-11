@@ -1,0 +1,35 @@
+# Maintainer: Eugene Dvoretsky <radioxoma at gmail.com>
+
+pkgname='python-javabridge'
+pkgver=4.0.3
+pkgrel=1
+pkgdesc="Python wrapper for the Java Native Interface."
+arch=('i686' 'x86_64')
+url="https://github.com/CellProfiler/python-javabridge"
+license=('BSD')
+depends=(
+  'jdk11-openjdk'
+  'python-numpy'
+)
+makedepends=('cython')
+source=("https://files.pythonhosted.org/packages/5e/d5/78f75ee0a6beb51a606c50cc17d8f99782653f04dce6d5e12feaef089692/python-javabridge-${pkgver}.tar.gz")
+sha256sums=('3fee0c235efcfe866f95695fdc0b6289eab2371043b32ff4ca6feff098de59c5')
+
+prepare() {
+  cd "$srcdir/python-javabridge-$pkgver"
+}
+
+build() {
+  cd "$srcdir/python-javabridge-$pkgver"
+  # It can't figure out own version without git repo in folder
+  # If version wasn't discovered, default value 0.0.0 breaks Cellprofiler
+  echo "__version__ = \"$pkgver\"" > javabridge/_version.py
+  python setup.py build
+}
+
+package() {
+  cd "$srcdir/python-javabridge-$pkgver"
+  python setup.py install --root="$pkgdir"/ --optimize=1
+  #install -D LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
+
